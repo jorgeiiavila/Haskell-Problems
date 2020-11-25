@@ -1,3 +1,5 @@
+import Data.List
+
 -- Problem 1
 myLast :: [a] -> a
 myLast [] = error "Empty List"
@@ -37,3 +39,23 @@ flatten :: NestedList a -> [a]
 flatten (Elem x) = [x]
 flatten (List []) = []
 flatten (List (x:xs)) = flatten x ++ (flatten (List xs)) 
+
+-- Problem 8
+compress :: (Eq a) => [a] -> [a]
+compress [] = []
+compress (x:[]) = [x]
+compress (x:ys@(y:_)) | x == y = compress ys
+                  | otherwise = x : compress ys
+
+-- Problem 9 - Option 1
+-- pack :: (Eq a) => [a] -> [[a]]
+-- pack xs = groupBy (\x y -> x == y) xs
+
+-- Problem 9 - Option 2
+pack list@(x:_) = let (first,rest) = span (==x) list
+               in first : pack rest
+pack [] = []
+
+-- Problem 10
+encode :: (Eq a) => [a] -> [(Int, a)]
+encode xs = map (\x -> (length x, head x)) (pack xs)
