@@ -59,3 +59,24 @@ pack [] = []
 -- Problem 10
 encode :: (Eq a) => [a] -> [(Int, a)]
 encode xs = map (\x -> (length x, head x)) (pack xs)
+
+-- Problem 11
+data Encoded a = Multiple Int a | Single a deriving Show
+encodeModified :: (Show a, Eq a) => [a] -> [Encoded a]
+encodeModified xs = map encodeModifiedHelper (pack xs)
+
+encodeModifiedHelper :: (Eq a) => [a] -> Encoded a
+encodeModifiedHelper xs | length xs == 1 = Single (head xs)
+          | otherwise = Multiple (length xs) (head xs)
+
+-- Problem 12 - My woeful solution
+-- decodeModified :: [Encoded a] -> [a]
+-- decodeModified [] = []
+-- decodeModified ((Multiple l v):xs) = (replicate l v) ++ (decodeModified xs)
+-- decodeModified ((Single v):xs) = [v] ++ (decodeModified xs)
+
+-- Problem 12 - The elegant solution given by the wiki
+decodeModified :: [Encoded a] -> [a]
+decodeModified = concatMap decodeHelper
+                where decodeHelper (Single v) = [v]
+                      decodeHelper (Multiple l v) = replicate l v
