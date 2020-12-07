@@ -30,3 +30,8 @@ searchInListHelper (x:xs) n index
         | x == n = index
         | otherwise = searchInListHelper xs n (index + 1)  
 
+customZip :: [a] -> [b] -> [(a, b)]
+customZip [] _ = []
+customZip _ [] = []
+customZip (x:xs) (y:ys) = (x,y) : (customZip xs ys)
+

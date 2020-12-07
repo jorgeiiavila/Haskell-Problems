@@ -80,3 +80,66 @@ decodeModified :: [Encoded a] -> [a]
 decodeModified = concatMap decodeHelper
                 where decodeHelper (Single v) = [v]
                       decodeHelper (Multiple l v) = replicate l v
+
+-- Problem 13
+encodeDirect :: (Eq a) => [a] -> [Encoded a]
+encodeDirect [] = []
+encodeDirect list@(x:_) = encodeDirectHelper list x 0
+
+encodeDirectHelper :: (Eq a) => [a] -> a -> Int -> [Encoded a]
+encodeDirectHelper [] curr l = [encodeElement l curr]
+encodeDirectHelper (x:xs) curr l | x == curr = encodeDirectHelper xs curr (l + 1)
+                                   | otherwise = (encodeElement l curr) : (encodeDirectHelper xs x 1)
+-- I got the idea of this simple function from the solution page.
+-- Used it to get a more readable solution.
+encodeElement 1 x = Single x
+encodeElement n x = Multiple n x          
+
+-- Problem 14
+dupli :: [a] -> [a]
+dupli [] = []
+dupli (x:xs) = x:x:dupli xs
+
+-- Problem 15
+repli :: [a] -> Int -> [a]
+repli [] _ = []
+repli (x:xs) l = take l (repeat x) ++ (repli xs l)
+
+-- Problem 16
+-- O(N^2) Solution
+dropEvery :: [a] -> Int -> [a]
+dropEvery [] _ = []
+dropEvery list l = xs ++ (dropEvery ys l)
+                 where xs = take (l - 1) list
+                       ys = drop l list
+
+-- Problem 17 - My Solution
+split :: [a] -> Int -> ([a], [a])
+split list l = splitHelper list [] l 0
+
+splitHelper :: [a] -> [a] -> Int -> Int -> ([a], [a])
+splitHelper [] accum _ _ = (accum, [])
+splitHelper list@(x:xs) accum l n | l == n = (accum, list)
+                            | otherwise = splitHelper xs (accum ++ [x]) l (n + 1)
+
+-- Problem 17 - The much elegant solution from the wiki
+
+-- Problem 18
+slice :: [a] -> Int -> Int -> [a]
+slice xs start end = take (end - start + 1) rest
+                        where rest = drop (start - 1) xs
+
+-- Problem 19
+rotate :: [a] -> Int -> [a]
+rotate xs n = start ++ end 
+                  where start = drop n' xs
+                        end = take n' xs
+                        n' = n `mod` (length xs)
+
+-- Problem 20
+removeAt :: Int -> [a] -> (a, [a])
+removeAt _ [] = error "Index too large" 
+removeAt 1 (x:xs) = (x, xs)
+removeAt n (x:xs) | n <= 0 = error "Index to small" 
+                  | otherwise = (r, x : list)
+                        where (r, list) = removeAt (n - 1) xs
